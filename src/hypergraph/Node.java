@@ -6,9 +6,13 @@ import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+import com.google.common.collect.TreeMultimap;
 
-public class Node {
+public class Node implements Comparable<Node> {
 	
+	/* XXX
+	 * Использовать вместо String что-нибудь легковесное.
+	 * Как изменится размер/скорость? */
 	public String type;
 	public Object data;
 		
@@ -23,14 +27,16 @@ public class Node {
 		
 	protected SetMultimap<String, Node> getSubnodesMap() {
 		if (type2subnodes == null) {
-			type2subnodes = HashMultimap.create();
+			//type2subnodes = HashMultimap.create(1, 2);
+			type2subnodes = TreeMultimap.create();//HashMultimap.create();
 		}
 		return type2subnodes;
 	}
 	
 	protected SetMultimap<String, Node> getSupernodesMap() {
 		if (type2supernodes == null) {
-			type2supernodes = HashMultimap.create(); 
+			//type2supernodes = HashMultimap.create(1, 2);
+			type2supernodes = TreeMultimap.create(); 
 		}
 		return type2supernodes;
 	}
@@ -134,5 +140,10 @@ public class Node {
 		return "Node [type=" + type + ", data=" + data +
 				", subnodes=" + ((type2subnodes == null) ? 0 : type2subnodes.size()) +
 				", supernodes=" + ((type2supernodes == null) ? 0 : type2supernodes.size()) + "]";
+	}
+
+	@Override
+	public int compareTo(Node o) {
+		return Integer.compare(this.data.hashCode(), o.data.hashCode());
 	}
 }

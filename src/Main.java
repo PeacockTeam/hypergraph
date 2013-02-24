@@ -1,10 +1,14 @@
 
 import hypergraph.Graph;
 import hypergraph.Node;
-import hypergraph.SimpleProjection;
-import hypergraph.traverse.BreadsFirstSearchIterator;
-import hypergraph.traverse.TraversalListener;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.graph.Pseudograph;
 import org.perf4j.LoggingStopWatch;
 import org.perf4j.StopWatch;
 
@@ -14,7 +18,7 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		Graph graph = new Graph();
+	/*	Graph graph = new Graph();
 		
 		graph.addNode(new Node("Object", "A"));
 		graph.addNode(new Node("Object", "B"));
@@ -106,20 +110,25 @@ public class Main {
 			Node node = it.next();
 			System.out.println(node.data);
 		}
-		
+		*/
 	
 		Debug.printMemoryState();
 		StopWatch timer = new LoggingStopWatch("Generation");
+		
 		Graph graph2 = generateRandom();
+		
+		//UndirectedGraph<Integer, String> g =createRandomJGraphT();
+		//System.out.println("g: " + g.vertexSet().size() + " " + g.edgeSet().size());
+		
 		timer.stop();
 		
-		
-		graph2.printSize();
-		graph2.printTypeSizes();
-		graph2.printLinkInfo();
-		
-		
 		Debug.printMemoryState();
+		
+		//graph2.printSize();
+		//graph2.printTypeSizes();
+		//graph2.printLinkInfo();
+		
+		//Debug.printMemoryState();
 	
 		//System.out.println(graph2.getNode("G123").getSubnodes());
 	}
@@ -127,7 +136,24 @@ public class Main {
 	public static Graph generateRandom() {
 		Graph graph = new Graph();
 		
-		int count = 1 * 1000 * 1000;
+		/*
+		 * add, get без type2nodes - ~4с, 4G
+		 * add, get c type2nodes - ~14с, 5G
+		 * full без type2nodes - 16с, 10G
+		 * full c type2nodes - 25с, 11G
+		 * 
+		 * HashMap:
+		 * связи нодов ~ 6G
+		 * пустые контейнеры связей ~ 2G
+		 * данные ~ 4G
+		 * 
+		 * TreeMap:
+		 * связи нодов ~ 3G
+		 * пустые контейнеры связей ~ 2G
+		 * данные ~ 1G
+		 */
+		
+		int count = 10 * 1000 * 1000;
 		
 		StopWatch timer = new LoggingStopWatch("Adding simple nodes");
 		for (Integer i = 0; i < count; i++) {
@@ -139,7 +165,7 @@ public class Main {
 		for (Integer i = 0; i < count; i++) {
 
 			Node e = new Node("E", "E" + i.toString());
-						
+								
 			e.add(graph.getNode(i % count));
 			e.add(graph.getNode(i * 2 % count));
 			
@@ -147,6 +173,7 @@ public class Main {
 		}
 		timer.stop();
 		
+		/*
 		for (Integer i = 0; i < count; i++) {
 
 			Node g = new Node("G", "G" + i.toString());
@@ -155,7 +182,55 @@ public class Main {
 			g.add(graph.getNode(i * 4 % count));
 			
 			graph.addNode(g);
+		}*/
+		
+		return graph;
+	}
+	
+	public static UndirectedGraph<Integer, String> createRandomJGraphT() {
+		
+		/*
+		 * full 18c, 3,5G
+		 */
+		
+		Map<Integer, Integer> nodeMap = new TreeMap<>();
+		
+		UndirectedGraph<Integer, String> graph = new Pseudograph<Integer, String>(String.class);
+		List<String> temp = new ArrayList<>();
+		
+		int count = 10 * 1000 * 1000;
+		
+		StopWatch timer = new LoggingStopWatch("Adding simple nodes");
+		for (Integer i = 0; i < count; i++) {
+			graph.addVertex(i);
+			nodeMap.put(i, i);
+			temp.add("N");
 		}
+		timer.stop();
+		
+		timer = new LoggingStopWatch("Adding edges");
+		for (Integer i = 0; i < count; i++) {
+			
+			Integer a = nodeMap.get(i % count);
+			Integer b = nodeMap.get(i * 2 % count);
+			
+			graph.addEdge(a, b, "E" + i.toString());
+			temp.add("E");
+		}
+		timer.stop();
+		
+		/*
+		for (Integer i = 0; i < count; i++) {
+
+			Node g = new Node("G", "G" + i.toString());
+			g.add(graph.getNode(i * 2 % count));
+			g.add(graph.getNode(i * 3 % count));
+			g.add(graph.getNode(i * 4 % count));
+			
+			graph.addNode(g);
+		}*/
+		System.out.println("temp: " + temp.size());
+		System.out.println("nodeMap: " + temp.size());
 		
 		return graph;
 	}

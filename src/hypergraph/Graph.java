@@ -10,6 +10,10 @@ import com.google.common.collect.SetMultimap;
 
 public class Graph {
 	
+	/* XXX
+	 * Можно ли объединить в один контейнер?
+	 * Это сильно ускорит создание графа (30s -> 17s) и освободит память (~ 1G)
+	 */
 	public SetMultimap<String, Node> type2nodes = HashMultimap.create();
 	public Map<Object, Node> data2node = new HashMap<>();
 	
@@ -75,7 +79,6 @@ public class Graph {
 		class CounterContainer {
 			
 			class Counter {
-				@SuppressWarnings("unused")
 				public long count;
 				public Counter(long count) {
 					this.count = count;
@@ -98,26 +101,35 @@ public class Graph {
 						counter.count += linksNumber;
 					}
 				}
-			}			
+			}
 		}
 
 		CounterContainer counterContainer = new CounterContainer();
 		
+		long linkContainersCount = 0;
+		
 		for (Node node : type2nodes.values()) {
 			if (node.type2subnodes != null) {
 				counterContainer.updateCounters(node.type2subnodes);
+				linkContainersCount++;
 			}
 			if (node.type2supernodes != null) {
 				counterContainer.updateCounters(node.type2supernodes);
+				linkContainersCount++;
 			}
 		}
 		
+		System.out.println("Link containers: " + linkContainersCount);
+		
+		long totalLinkCount = 0;
 		System.out.println("Link counts by type: ");
 		for (Entry<String, CounterContainer.Counter> entry :
 			counterContainer.counters.entrySet())
 		{
 			System.out.println(entry.getKey() + "\t" + entry.getValue().count);
+			totalLinkCount += entry.getValue().count;
 		}
+		System.out.println("Total\t" + totalLinkCount);
 	}
 	
 }
