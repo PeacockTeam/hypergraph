@@ -1,9 +1,8 @@
 package hypergraph.traverse;
 
 
-import hypergraph.Graph;
 import hypergraph.Node;
-import hypergraph.SimpleProjection;
+import hypergraph.projection.Projection;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -14,8 +13,8 @@ public class BreadsFirstSearchIterator extends TraverseIterator {
     private Deque<Node> queue = new ArrayDeque<Node>();
 
 
-    public BreadsFirstSearchIterator(Graph g, SimpleProjection projection) {
-        super(g, projection);
+    public BreadsFirstSearchIterator(Projection projection) {
+        super(projection);
     }
  
     protected boolean isConnectedComponentExhausted() {

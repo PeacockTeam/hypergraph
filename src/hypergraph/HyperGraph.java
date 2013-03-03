@@ -1,60 +1,125 @@
 package hypergraph;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
-public class Graph {
+public class HyperGraph {
 	
 	/* XXX
-	 * Можно ли объединить в один контейнер?
-	 * Это сильно ускорит создание графа (30s -> 17s) и освободит память (~ 1G)
+	 * Use single container? Performance increase (30s -> 17s) and memory gain (~ 1G)
 	 */
+	
+	public Map<Object, Node> id2node = new HashMap<>();
 	public SetMultimap<String, Node> type2nodes = HashMultimap.create();
-	public Map<Object, Node> data2node = new HashMap<>();
-	
-	
-	/* Add/Remove functions */
-	
+
+		
+	/* Add functions */
+		
 	public void addNode(Node node) {
+		if (node.id != null) {
+			id2node.put(node.id, node);
+		}
 		type2nodes.put(node.type, node);
-		data2node.put(node.data, node);
 	}
+	
+	
+	/* Remove functions */
 	
 	public void removeNode(Node node) {
 		node.unlink();
+		if (node.id != null) {
+			id2node.remove(node.id);
+		}
 		type2nodes.remove(node.type, node);
-		data2node.remove(node.data);
+	}
+	
+	public void removeNode(Object id) {
+		Node node = id2node.get(id);
+		if (node != null) {
+			removeNode(node);
+		} else {
+			throw new RuntimeException("Node id " + id + " is not found");
+		}
 	}
 	
 	
 	/* Get functions */
 	
-	public Node getNode(Object data) {
-		return data2node.get(data); 
+	public Node getNode(Object id) {
+		return id2node.get(id);
+	}
+	
+	public boolean containsNode(Object id) {
+		return id2node.containsKey(id);
 	}
 	
 	public Collection<Node> getNodes() {
-		return data2node.values();
+		return type2nodes.values();
 	}
-	
+		
 	public Collection<Node> getNodes(String type) {
 		return type2nodes.get(type);
 	}
 	
-	public Collection<Node> getVertices(SimpleProjection projection) {
-		return getNodes(projection.vertexType);
+	public Collection<Node> getNodes(String... types) {
+		Collection<Node> nodes = new ArrayList<>();
+		for (String type : types) {
+			nodes.addAll(getNodes(type));
+		}
+		return nodes;
 	}
 	
-	public Collection<Node> getEdges(SimpleProjection projection) {
-		return getNodes(projection.edgeType);
-	}	
+	public Collection<Node> getSupernodesOf(Node... subnodes) {
+		Set<Node> supernodes = new HashSet<>();
+		for (Node subnode : subnodes) {
+			Collection<Node> temp = subnode.getSupernodes();
+			if (temp != null) {
+				supernodes.addAll(temp);
+			}
+		}
+		return supernodes;
+	}
 	
-
+	public Collection<Node> getSubnodesOf(Node... supernodes) {
+		Set<Node> subnodes = new HashSet<>();
+		for (Node supernode : supernodes) {
+			Collection<Node> temp = supernode.getSubnodes();
+			if (temp != null) {
+				subnodes.addAll(temp);
+			}
+		}
+		return subnodes;
+	}
+	
+	
+	/* New */
+		
+	public Node getEdge(String edgeType, Node node1, Node node2) {
+		Collection<Node> supernodes1 = node1.getSupernodes(edgeType);
+		Collection<Node> supernodes2 = node2.getSupernodes(edgeType);
+		
+		if (supernodes1 == null || supernodes2 == null) {
+			return null;
+		}
+		
+		for (Node sn1 : supernodes1) {
+			for (Node sn2 : supernodes2) {
+				if (sn1 == sn2) {
+					return sn1;
+				}
+			}
+		}
+		return null;
+	}
+	
 	
 	/* === Debug functions === */
 	

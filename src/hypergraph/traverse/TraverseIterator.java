@@ -1,8 +1,7 @@
 package hypergraph.traverse;
 
-import hypergraph.Graph;
 import hypergraph.Node;
-import hypergraph.SimpleProjection;
+import hypergraph.projection.Projection;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -11,8 +10,7 @@ import java.util.Set;
 
 public abstract class TraverseIterator implements Iterator<Node> {
 
-	public SimpleProjection projection;
-	public Graph graph;
+	public Projection projection;
 	public boolean isCrossComponentTraversal = true;
 	
 	
@@ -59,16 +57,15 @@ public abstract class TraverseIterator implements Iterator<Node> {
     
     /* Constructors */
 
-    public TraverseIterator(Graph g, SimpleProjection projection) {
-    	this(g, projection, true);
+    public TraverseIterator(Projection projection) {
+    	this(projection, true);
     }
     
-	public TraverseIterator(Graph g, SimpleProjection projection, boolean isCrossComponentTraversal) {
-		this.graph = g;
+	public TraverseIterator(Projection projection, boolean isCrossComponentTraversal) {
 		this.projection = projection;
 		this.isCrossComponentTraversal = isCrossComponentTraversal;
         
-        vertexIterator = g.getVertices(projection).iterator();
+        vertexIterator = projection.getVertices().iterator();
                 
         if (vertexIterator.hasNext()) {
             this.startVertex = vertexIterator.next();
@@ -153,7 +150,7 @@ public abstract class TraverseIterator implements Iterator<Node> {
 	
 	private void addUnseenChildrenOf(Node vertex) {
 		
-		for (Node neighbor : vertex.getNeighbors(projection)) {
+		for (Node neighbor : projection.getNeighborsOf(vertex)) {
 			// fire edge traversed
             if (visitedVertices.contains(neighbor)) {
                 encounterVertexAgain(neighbor);

@@ -1,10 +1,14 @@
 
-import hypergraph.Graph;
+import hypergraph.HyperGraph;
 import hypergraph.Node;
+import hypergraph.projection.Projection;
+import hypergraph.traverse.BreadsFirstSearchIterator;
+import hypergraph.traverse.TraversalListener;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.jgrapht.UndirectedGraph;
@@ -14,84 +18,101 @@ import org.perf4j.StopWatch;
 
 
 
+
 public class Main {
 
 	public static void main(String[] args) {
 
-	/*	Graph graph = new Graph();
+		HyperGraph graph = new HyperGraph();
 		
-		graph.addNode(new Node("Object", "A"));
-		graph.addNode(new Node("Object", "B"));
-		graph.addNode(new Node("Object", "C"));
-		graph.addNode(new Node("Object", "D"));
-		graph.addNode(new Node("Object", "E"));
-		graph.addNode(new Node("Object", "F"));
-		graph.addNode(new Node("Object", "G"));
-		graph.addNode(new Node("Object", "H"));
+		graph.addNode(new Node("A", "Object"));
+		graph.addNode(new Node("B", "Object"));
+		graph.addNode(new Node("C", "Object"));
+		graph.addNode(new Node("D", "Object"));
+		graph.addNode(new Node("E", "Object"));
+		graph.addNode(new Node("F", "Object"));
+		graph.addNode(new Node("G", "Object"));
+		graph.addNode(new Node("H", "Object"));
 		
 		
-		Node AB = new Node("Edge", "AB");
+		Node AB = new Node("AB", "Edge");
 		AB.add(graph.getNode("A"));
 		AB.add(graph.getNode("B"));
 		graph.addNode(AB);
 		
-		Node BC = new Node("Edge", "BC");
+		Node BC = new Node("BC", "Edge");
 		BC.add(graph.getNode("B"));
 		BC.add(graph.getNode("C"));
 		graph.addNode(BC);
 		
-		Node CD = new Node("Edge", "CD");
+		Node CD = new Node("CD", "Edge");
 		CD.add(graph.getNode("C"));
 		CD.add(graph.getNode("D"));
 		graph.addNode(CD);
 		
-		Node DA = new Node("Edge", "DA");
+		Node DA = new Node("DA", "Edge");
 		DA.add(graph.getNode("D"));
 		DA.add(graph.getNode("A"));
 		graph.addNode(DA);
 		
-		Node FG = new Node("Edge", "FG");
+		Node FG = new Node("FG", "Edge");
 		FG.add(graph.getNode("F"));
 		FG.add(graph.getNode("G"));
 		graph.addNode(FG);
 		
-		Node GH = new Node("Edge", "GH");
+		Node GH = new Node("GH", "Edge");
 		GH.add(graph.getNode("G"));
 		GH.add(graph.getNode("H"));
 		graph.addNode(GH);
 	
 		
-		Node ABC = new Node("Group", "ABC");
+		Node ABC = new Node("ABC", "Group");
 		ABC.add(graph.getNode("A"));
 		ABC.add(graph.getNode("B"));
 		ABC.add(graph.getNode("C"));
 		graph.addNode(ABC);
 		
-		Node EDF = new Node("Group", "EDF");
+		Node EDF = new Node("EDF", "Group");
 		EDF.add(graph.getNode("E"));
 		EDF.add(graph.getNode("D"));
 		EDF.add(graph.getNode("F"));
 		graph.addNode(EDF);
+		
+		Node AH = new Node("AH", "Group");
+		AH.add(graph.getNode("A"));
+		AH.add(graph.getNode("H"));
+		graph.addNode(AH);
 		
 		
 		graph.printTypeSizes();
 		
 		graph.printLinkInfo();
 		
-		SimpleProjection projection = new SimpleProjection("Object", "Edge");
+		Projection projection = new Projection(
+			graph,
+			new String[] {"Object"},
+			//new String[] {"Edge", "Group"}
+			//new String[] {"Edge"}
+			new String[] {"Group"}
+		);
 		
-		System.out.println(graph.getNode("A").getSupernodes("Group"));
-		System.out.println(graph.getNode("A").getSupernodes());
-		System.out.println(graph.getNode("A").getNeighbors(projection));
-		System.out.println(graph.getNode("F").getNeighbors(projection));
-		System.out.println(graph.getNode("F").getEdges(projection));
-		System.out.println(graph.getNode("G").getDegree(projection));
+		System.out.println(projection.getVertices());
+		System.out.println(projection.getEdges());
+		
+		System.out.println(projection.getNeighborsOf(graph.getNode("E")));
+		System.out.println(projection.getDegreeOf(graph.getNode("E")));
+		
+		System.out.println(projection.getNeighborsOf(graph.getNode("A")));
+		System.out.println(projection.getNeighborsOf(graph.getNode("F")));
+		System.out.println(projection.getEdgesOf(graph.getNode("F")));
+		System.out.println(projection.getDegreeOf(graph.getNode("F")));
+		System.out.println(projection.getDegreeOf(graph.getNode("H")));
+		
 		System.out.println();
 		
+
 		BreadsFirstSearchIterator it =
-			new BreadsFirstSearchIterator(
-				graph,
-				new SimpleProjection("Object", "Edge"));
+			new BreadsFirstSearchIterator(projection);
 		
 		it.addTraversalListener(new TraversalListener() {
 			@Override
@@ -104,25 +125,79 @@ public class Main {
 				System.out.println("connectedComponentFinished()");
 			}
 		});
-			
+
 		
 		while (it.hasNext()) {
 			Node node = it.next();
-			System.out.println(node.data);
+			System.out.println(node.id);
 		}
-		*/
-	
+
 		Debug.printMemoryState();
+		
+		
+		/* Generation */
+		
 		StopWatch timer = new LoggingStopWatch("Generation");
+		HyperGraph graph2 = generateRandom();
+		timer.stop();		
+		Debug.printMemoryState();
+	
 		
-		Graph graph2 = generateRandom();
 		
-		//UndirectedGraph<Integer, String> g =createRandomJGraphT();
-		//System.out.println("g: " + g.vertexSet().size() + " " + g.edgeSet().size());
+		projection = new Projection(
+			graph2,
+			new String[] { "N" },
+			new String[] { "E", "G" }
+		);
 		
+		class Counter {
+			long count = 0;
+		}
+		final Counter connectedSetsCounter = new Counter();
+
+		
+		timer = new LoggingStopWatch("Traverse");
+		BreadsFirstSearchIterator it1 =
+			new BreadsFirstSearchIterator(projection);
+			
+		it1.addTraversalListener(new TraversalListener() {
+			@Override
+			public void connectedComponentStarted() {
+				connectedSetsCounter.count++;
+				//System.out.println("connectedComponentStarted()");
+			}
+				
+			@Override
+			public void connectedComponentFinished() {
+				//System.out.println("connectedComponentFinished()");
+			}
+		});
+		while (it1.hasNext()) {
+			Node node = it1.next();
+			//System.out.println(node.id);
+		}
+			
+		System.out.println("Connected sets: " + connectedSetsCounter.count);
+			
 		timer.stop();
 		
 		Debug.printMemoryState();
+		
+		
+		
+		
+		/* Connected sets */
+		
+		timer = new LoggingStopWatch("Connected sets");
+		List<Set<Node>> connectedSets = projection.getConnectedSets();
+		timer.stop();
+		Debug.printMemoryState();
+		
+		System.out.println("Connected sets: " + connectedSets.size());
+		for (Set<Node> connectedSet : connectedSets) {
+			System.out.println(connectedSet.size());
+		}
+		
 		
 		//graph2.printSize();
 		//graph2.printTypeSizes();
@@ -133,8 +208,8 @@ public class Main {
 		//System.out.println(graph2.getNode("G123").getSubnodes());
 	}
 	
-	public static Graph generateRandom() {
-		Graph graph = new Graph();
+	public static HyperGraph generateRandom() {
+		HyperGraph graph = new HyperGraph();
 		
 		/*
 		 * add, get без type2nodes - ~4с, 4G
@@ -157,24 +232,23 @@ public class Main {
 		
 		StopWatch timer = new LoggingStopWatch("Adding simple nodes");
 		for (Integer i = 0; i < count; i++) {
-			graph.addNode(new Node("N", i));
+			graph.addNode(new Node(i, "N"));
 		}
 		timer.stop();
 		
 		timer = new LoggingStopWatch("Adding edges");
 		for (Integer i = 0; i < count; i++) {
 
-			Node e = new Node("E", "E" + i.toString());
-								
+			Node e = new Node("E" + i.toString(), "E");
+	
 			e.add(graph.getNode(i % count));
-			e.add(graph.getNode(i * 2 % count));
-			
+			e.add(graph.getNode(i * 2 % count));		
+
 			graph.addNode(e);
 		}
 		timer.stop();
 		
-		/*
-		for (Integer i = 0; i < count; i++) {
+		for (Integer i = 0; i < count / 10; i++) {
 
 			Node g = new Node("G", "G" + i.toString());
 			g.add(graph.getNode(i * 2 % count));
@@ -182,7 +256,7 @@ public class Main {
 			g.add(graph.getNode(i * 4 % count));
 			
 			graph.addNode(g);
-		}*/
+		}
 		
 		return graph;
 	}
