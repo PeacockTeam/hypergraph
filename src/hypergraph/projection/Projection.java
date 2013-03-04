@@ -137,5 +137,4 @@ public class Projection {
 				" not allowed in this projection");
 		}
 	}
-	
 }

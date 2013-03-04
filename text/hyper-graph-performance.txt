@@ -1,0 +1,34 @@
+start[1362398125825] time[4859] tag[Adding simple nodes]
+start[1362398130685] time[21826] tag[Adding simple edges]
+start[1362398125814] time[26698] tag[generateHyperGraph()]
+Used Memory:8297 mb
+Free Memory:13036 mb
+Total Memory:21333 mb
+Max Memory:22755 mb
+
+Graph: 20000000
+
+Node numbers by types:
+E	10000000
+N	10000000
+
+Link containers: 20000000
+Link counts by type: 
+E	19999999
+N	19999999
+Total	39999998
+start[1362398160645] time[82624] tag[testProjectionTraverse]
+Connected sets: 8
+Used Memory:13544 mb
+Free Memory:11202 mb
+Total Memory:24746 mb
+Max Memory:24746 mb
+
+start[1362398243268] time[35435] tag[testProjectionConnectedSets()]
+Used Memory:11943 mb
+Free Memory:10812 mb
+Total Memory:22755 mb
+Max Memory:22755 mb
+
+Connected sets: 8
+8000000 1600000 320000 64000 12800 2560 512 128 

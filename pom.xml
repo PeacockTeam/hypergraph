@@ -4,7 +4,21 @@
 	<groupId>TestGraph</groupId>
 	<artifactId>TestGraph</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	
+	<repositories>
+		<!--  Hypergraph DB -->
+	    <repository>
+	    	<id>hypergraphdb</id>
+	    	<url>http://hypergraphdb.org/maven</url>
+    	</repository>        
+	</repositories>
+	
+
+	
 	<dependencies>
+		
+		<!-- Implementation deps -->
+		
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava-collections</artifactId>
@@ -16,10 +30,25 @@
 			<version>0.9.16</version>
 			<scope>compile</scope>
 		</dependency>
+		
+		
+		<!-- Other graph libs for testing -->
+			
 		<dependency>
 			<groupId>net.sf.jgrapht</groupId>
 			<artifactId>jgrapht</artifactId>
 			<version>0.8.3</version>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>org.hypergraphdb</groupId>
+			<artifactId>hgdb</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hypergraphdb</groupId>
+			<artifactId>hgbdbje</artifactId>
+			<version>1.2</version>
+		</dependency>
+				
 	</dependencies>
 </project>

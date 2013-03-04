@@ -14,7 +14,8 @@ import com.google.common.collect.SetMultimap;
 public class HyperGraph {
 	
 	/* XXX
-	 * Use single container? Performance increase (30s -> 17s) and memory gain (~ 1G)
+	 * Use single container?
+	 * Performance increase at creating time (27s -> 17s) and memory gain (~ 1G)
 	 */
 	
 	public Map<Object, Node> id2node = new HashMap<>();

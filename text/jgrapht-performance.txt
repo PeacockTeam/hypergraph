@@ -1,0 +1,25 @@
+start[1362397493148] time[4487] tag[Adding simple nodes]
+start[1362397497633] time[15758] tag[Adding simple edges]
+temp: 20000000
+nodeMap: 20000000
+start[1362397493142] time[20252] tag[createJGraphT()]
+Used Memory:3455 mb
+Free Memory:16171 mb
+Total Memory:19626 mb
+Max Memory:22755 mb
+
+Connected sets: 8
+start[1362397513392] time[14967] tag[testTraverse]
+Used Memory:5093 mb
+Free Memory:14533 mb
+Total Memory:19626 mb
+Max Memory:22755 mb
+
+start[1362397528360] time[21362] tag[testConnectedSets()]
+Used Memory:7424 mb
+Free Memory:12202 mb
+Total Memory:19626 mb
+Max Memory:22755 mb
+
+Connected sets: 8
+8000000 1600000 320000 64000 12800 2560 512 128 
