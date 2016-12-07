@@ -1,20 +1,20 @@
-package hypergraph.traverse;
+package experimental.hypergraph.traverse;
 
-import hypergraph.Node;
-import hypergraph.projection.Projection;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.Set;
+
+import experimental.hypergraph.Node;
+import experimental.hypergraph.projection.Projection;
 
 public abstract class TraverseIterator implements Iterator<Node> {
 
-	public Projection projection;
-	public boolean isCrossComponentTraversal = true;
+	protected Projection projection;
+	protected boolean isCrossComponentTraversal = true;
 	
-	
-	/* Internal data */
+	protected Node startVertex;
+	protected Iterator<Node> vertexIterator;
 	
 	enum ConnectedComponentState {
 		BEFORE_COMPONENT,
@@ -25,10 +25,6 @@ public abstract class TraverseIterator implements Iterator<Node> {
 	protected ConnectedComponentState state =
 		ConnectedComponentState.BEFORE_COMPONENT;
 
-	protected Node startVertex;
-	protected Iterator<Node> vertexIterator;
-	protected Set<Node> visitedVertices = new HashSet<>();
-	
 	
 	/* Connected component traversal listeners */
 	
@@ -58,33 +54,36 @@ public abstract class TraverseIterator implements Iterator<Node> {
     /* Constructors */
 
     public TraverseIterator(Projection projection) {
-    	this(projection, true);
+    	this(projection, true, null);
     }
-    
-	public TraverseIterator(Projection projection, boolean isCrossComponentTraversal) {
+        
+	public TraverseIterator(Projection projection, boolean isCrossComponentTraversal, Node startVertex) {
 		this.projection = projection;
 		this.isCrossComponentTraversal = isCrossComponentTraversal;
         
         vertexIterator = projection.getVertices().iterator();
-                
-        if (vertexIterator.hasNext()) {
+
+        if (startVertex != null) {
+        	this.startVertex = startVertex;
+        }
+        else if (vertexIterator.hasNext()) {
             this.startVertex = vertexIterator.next();
         }
     }
 	
-	
 	/* Abstract functions */
 	
 	protected abstract boolean isConnectedComponentExhausted();
-	protected abstract void encounterVertex(Node vertex);
-	protected abstract void encounterVertexAgain(Node vertex);
+	protected abstract boolean isVisited(Node vertex);
+	protected abstract void encounterVertex(Node vertex, Node from);
+	protected abstract void encounterVertexAgain(Node vertex, Node from);
 	protected abstract Node provideNextVertex();
 
 	
 	/* Algorithm functions */
 	
 	private void encounterStartVertex() {
-        encounterVertex(startVertex);
+        encounterVertex(startVertex, null);
         startVertex = null;
     }
 	
@@ -110,28 +109,24 @@ public abstract class TraverseIterator implements Iterator<Node> {
 			return false;
 		}
 		
+		// XXX whole lot of iterations after each connected set?		
 		while (vertexIterator.hasNext()) {
 			Node vertex = vertexIterator.next();
 
-			if (!visitedVertices.contains(vertex)) {
-				encounterVertex(vertex);
+			if (!isVisited(vertex)) {
+				encounterVertex(vertex, null);
 				state = ConnectedComponentState.BEFORE_COMPONENT;
 				return true;
 			}
 		}
 
-		return false;	    
+		return false;
 	}
-
 
 	@Override
 	public Node next() {
 		if (startVertex != null) {
             encounterStartVertex();
-        }
-
-        if (!hasNext()) {
-        	throw new NoSuchElementException();
         }
         
         if (state == ConnectedComponentState.BEFORE_COMPONENT) {
@@ -150,18 +145,19 @@ public abstract class TraverseIterator implements Iterator<Node> {
 	
 	private void addUnseenChildrenOf(Node vertex) {
 		
+		// XXX Use getEdges() instead of getNeighborsOf()?
+		
 		for (Node neighbor : projection.getNeighborsOf(vertex)) {
 			// fire edge traversed
-            if (visitedVertices.contains(neighbor)) {
-                encounterVertexAgain(neighbor);
+			if (isVisited(neighbor)) {
+                encounterVertexAgain(neighbor, vertex);
             } else {
-                encounterVertex(neighbor);
+                encounterVertex(neighbor, vertex);
             }
         }
     }
 
 	@Override
-	public void remove()
-	{
+	public void remove() {
 	}
 }

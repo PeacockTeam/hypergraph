@@ -1,54 +1,38 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>TestGraph</groupId>
-	<artifactId>TestGraph</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	
-	<repositories>
-		<!--  Hypergraph DB -->
-	    <repository>
-	    	<id>hypergraphdb</id>
-	    	<url>http://hypergraphdb.org/maven</url>
-    	</repository>        
-	</repositories>
-	
-
-	
-	<dependencies>
-		
-		<!-- Implementation deps -->
-		
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava-collections</artifactId>
-			<version>r03</version>
-		</dependency>
-		<dependency>
-			<groupId>org.perf4j</groupId>
-			<artifactId>perf4j</artifactId>
-			<version>0.9.16</version>
-			<scope>compile</scope>
-		</dependency>
-		
-		
-		<!-- Other graph libs for testing -->
-			
-		<dependency>
-			<groupId>net.sf.jgrapht</groupId>
-			<artifactId>jgrapht</artifactId>
-			<version>0.8.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hypergraphdb</groupId>
-			<artifactId>hgdb</artifactId>
-			<version>1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hypergraphdb</groupId>
-			<artifactId>hgbdbje</artifactId>
-			<version>1.2</version>
-		</dependency>
-				
-	</dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.bic</groupId>
+    <artifactId>sentinel</artifactId>
+    <version>16.12-dev</version>
+  </parent>
+  <artifactId>sentinel-hypergraph</artifactId>
+  <dependencies>
+  	<dependency>
+  		<groupId>net.sf.trove4j</groupId>
+  		<artifactId>trove4j</artifactId>
+  		<version>3.0.3</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.apache.commons</groupId>
+  		<artifactId>commons-lang3</artifactId>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.perf4j</groupId>
+  		<artifactId>perf4j</artifactId>
+  	</dependency>
+  	<dependency>
+  		<groupId>net.sf.jgrapht</groupId>
+  		<artifactId>jgrapht</artifactId>
+  		<version>0.8.3</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.apache.directory.studio</groupId>
+  		<artifactId>org.apache.logging.log4j</artifactId>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.google.guava</groupId>
+  		<artifactId>guava</artifactId>
+  		<version>15.0</version>
+  	</dependency>
+  </dependencies>
 </project>
